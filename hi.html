@@ -1,8 +1,19 @@
  <!doctype html>
-
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
+img {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px;
+    width: 150px;
+}
+
+img:hover {
+    box-shadow: 0 0 2px 1px rgba(0, 140, 186, 0.5);
+}
+
+
 body {font-family: Arial, Helvetica, sans-serif;}
 
 /* The Modal (background) */
@@ -44,45 +55,52 @@ body {font-family: Arial, Helvetica, sans-serif;}
     cursor: pointer;
 }
 </style>
+<script type="text/javascript" src="myfunc.js"></script>
 </head>
 
 
-
-
-
 <body>
+
     <title>Upload new </title>
     <h1>Upload new File</h1>
     <form  method=post enctype=multipart/form-data>
       <input type=file id="myfile" name=file onChange=myFunction() >
       <input type=submit value=Upload>
-      <input type=hidden name=file_size id=file_size>
     </form>
     <a href="{{url_for('uploaded_file' , filename=filename)}}"><button>download</button></a>
     <a href="{{url_for('delete_file' , filename=filename)}}"><button>delete</button></a>
-    <p id="demo"></p>
     <a href="{{url_for('delete_file' , filename=filename)}}"><button id="auto">auto delete</button></a>
     <button id="myBtn" >Open Modal</button>
 
+<!-- Image -->
+<h2>Thumbnail Image</h2>
+<a target="_blank" href="img_forest.jpg">
+  <img src="C:\x-zone\UC\CLOUD\project\{{filename}}" alt="Forest" style="width:150px">
+</a>
+
 <!-- The Modal -->
 <div id="myModal" class="modal">
-
   <!-- Modal content -->
   <div class="modal-content">
   	<span class="close">&times;</span>
-    <p>{{file_type}}</p>
-    <p>{{file_size}}</p>
-    <p>{{file_ctime}}</p>
-    <p>{{file_mtime}}</p>
-    <p>{{image_size}}</p>
-    <p>{{mean}}</p>
-    <p>{{file_sizebytes}}</p>>
-    <p>{{file_numpages}}</p>
+    <p>File Format:- {{file_type}}</p>
+    <p>File Creation Time:- {{file_ctime}}</p>
+    <p>File Last Accessed Time:- {{file_mtime}}</p>
+    <p>File Size:- {{file_sizebytes}}</p>
+    {% if file_type=='pdf' : %}
+       <p>No.of pages:- {{file_numpages}}</p>
+       <p>No.of words:- {{d[0]}}</p>
+       <p>No.of lines:- {{d[1]}}</p>
+       <p>page resolution:- {{d[2]}}</p>
+    
+    {%else:%}
+       <p>Image Size:- {{image_size}}</p>
+       <p>Mean of RGB:- {{mean}}</p>
+    {%endif%}
+    
 
   </div>
-
 </div>
-
 
 <script>
 
@@ -114,52 +132,13 @@ window.onclick = function(event) {
 }
 
 
-
-
-
-
-
-
-
-function myFunction()
-{
-    var x = document.getElementById("myfile");
-    var txt = "";
-    if ('files' in x) {
-        if (x.files.length == 0) {
-            txt = "Select one or more files.";
-        } else {
-            for (var i = 0; i < x.files.length; i++) {
-                txt += "<br><strong>" + (i+1) + ". file</strong><br>";
-                var file = x.files[i];
-                if ('name' in file) {
-                    txt += "name: " + file.name + "<br>";
-                }
-                if ('size' in file) {
-                    txt += "size: " + file.size + " bytes <br>";
-                }
-            }
-        }
-    } 
-    else {
-        if (x.value == "") {
-            txt += "Select one or more files.";
-        } else {
-            txt += "The files property is not supported by your browser!";
-            txt  += "<br>The path of the selected file: " + x.value; // If the browser does not support the files property, it will return the path of the selected file instead. 
-        }
-    }
-    document.getElementById("file_size").value = x.files[0].size;
-    document.getElementById("demo").innerHTML = txt;
-}
-
-
 var interval = setInterval(function () { myFunction(); }, 10000);
 myFunction()
 {
 document.getElementsById('auto').click()
-}	
+}   
 
 </script>
+
 </body>
 </html> 
