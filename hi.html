@@ -1,34 +1,77 @@
- <!doctype html>
+<!doctype html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <style>
+.jumbotron .h1, .jumbotron h1{
+    color: #182a8a;
+}
+
+h2{
+    color: white;
+}
+
+h3{
+    color: white;
+}
+
+h6{
+    color: white;
+}
+
+
 img {
     border: 1px solid #ddd;
     border-radius: 4px;
     padding: 5px;
-    width: 150px;
+    
 }
 
 img:hover {
     box-shadow: 0 0 2px 1px rgba(0, 140, 186, 0.5);
 }
 
+input[type="file"] {
+    display: none;
+}
 
-body {font-family: Arial, Helvetica, sans-serif;}
+.custom-file-upload {
+    border: 1px solid #ccc;
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;    
+    border-radius: 5px;
+    background: white;
+    color: black;
+}
+
+.custom-file-upload:hover{
+    background: black;
+    color: white;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #2f2f2f;
+}
 
 /* The Modal (background) */
 .modal {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
-    padding-top: 100px; /* Location of the box */
+    display: none;
+    position: fixed; 
+    z-index: 1; 
+    padding-top: 100px; 
     left: 0;
     top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    width: 100%; 
+    height: 100%; 
+    overflow: auto; 
+    background-color: rgb(0,0,0); 
+    background-color: rgba(0,0,0,0.4); 
 }
 
 /* Modal Content */
@@ -60,24 +103,41 @@ body {font-family: Arial, Helvetica, sans-serif;}
 
 
 <body>
-
-    <title>Upload new </title>
-    <h1>Upload new File</h1>
+<div class="container">
+    <div class="jumbotron">
+        <center>
+            <h1><strong>Project-Uploading File</strong></h1>
+            </br>
+            <h3 class="text-success">(Image Supported)</h3>
+            <h6 class="text-success">*also supports pdf</h6>
+        </center> 
+    </div>
+</div>
+<center>
+    <h3><strong>Upload new File</strong></h1>
+    <div class="row">
     <form  method=post enctype=multipart/form-data>
-      <input type=file id="myfile" name=file onChange=myFunction() >
-      <input type=submit value=Upload>
+    	  <label class="custom-file-upload">
+            <input type=file id="myfile" name=file onChange=myFunction() />
+            Upload File
+          </label>
+          </br>
+          <h6 class="text-white">*size limit is 2 mb</h6>
+          <h6 class="text-white">*file will be auto deleted after 5 min</h6>
+     <div class="col-sm-3" > <input type=submit value=Upload onclick=render()  class=class="text-danger btn btn-success"></div>
     </form>
-    <a href="{{url_for('uploaded_file' , filename=filename)}}"><button>download</button></a>
-    <a href="{{url_for('delete_file' , filename=filename)}}"><button>delete</button></a>
-    <a href="{{url_for('delete_file' , filename=filename)}}"><button id="auto">auto delete</button></a>
-    <button id="myBtn" >Open Modal</button>
-
-<!-- Image -->
+   <div class="col-sm-3" > <a href="{{url_for('uploaded_file' , filename=filename)}}" class="text-white">download</a> </div>
+   <div class="col-sm-3" > <a href="{{url_for('delete_file' , filename=filename)}}" class="text-success"><button  class="btn btn-danger">delete</button></a></div>
+    <button id="myBtn"  class="text-success btn btn-default">Properties and data</button>
+   
+{% if file_type in ['pdf'," "] : %}
+ 
+{% else: %} 
 <h2>Thumbnail Image</h2>
-<a target="_blank" href="img_forest.jpg">
-  <img src="C:\x-zone\UC\CLOUD\project\{{filename}}" alt="Forest" style="width:150px">
-</a>
-
+ <img class="img-thumbnail" src={{url_for("send_image",filename=filename)}} width=150px>
+{%endif%}
+ </div>
+</center>
 <!-- The Modal -->
 <div id="myModal" class="modal">
   <!-- Modal content -->
@@ -92,15 +152,42 @@ body {font-family: Arial, Helvetica, sans-serif;}
        <p>No.of words:- {{d[0]}}</p>
        <p>No.of lines:- {{d[1]}}</p>
        <p>page resolution:- {{d[2]}}</p>
-    
+       </br>
+       <p id="k">page content:- {{url_for("send_image",filename=filename)}}</p>
     {%else:%}
        <p>Image Size:- {{image_size}}</p>
        <p>Mean of RGB:- {{mean}}</p>
+       <p id="k">page content:- {{url_for("send_image",filename=filename)}}</p>
+       <img class="img-rounded" src={{url_for("send_image",filename=filename)}} width=500px height=auto>
     {%endif%}
-    
-
-  </div>
+   </div>
 </div>
+
+
+<div id="myModal" class="modal">
+  <!-- Modal content -->
+  <div class="modal-content">
+  	<span class="close">&times;</span>
+    <p>File Format:- {{file_type}}</p>
+    <p>File Creation Time:- {{file_ctime}}</p>
+    <p>File Last Accessed Time:- {{file_mtime}}</p>
+    <p>File Size:- {{file_sizebytes}}</p>
+    {% if file_type=='pdf' : %}
+       <p>No.of pages:- {{file_numpages}}</p>
+       <p>No.of words:- {{d[0]}}</p>
+       <p>No.of lines:- {{d[1]}}</p>
+       <p>page resolution:- {{d[2]}}</p>
+       </br>
+       <p id="k">page content:- {{url_for("send_image",filename=filename)}}</p>
+    {%else:%}
+       <p>Image Size:- {{image_size}}</p>
+       <p>Mean of RGB:- {{mean}}</p>
+       <p id="k">page content:- {{url_for("send_image",filename=filename)}}</p>
+       <img class="img-rounded" src={{url_for("send_image",filename=filename)}} width=auto height=auto>
+    {%endif%}
+   </div>
+</div>
+
 
 <script>
 
@@ -130,7 +217,6 @@ window.onclick = function(event) {
         modal.style.display = "none";
     }
 }
-
 
 var interval = setInterval(function () { myFunction(); }, 10000);
 myFunction()
